@@ -1,10 +1,43 @@
 export const exampleData: Array<any> = [
   {
-    col1: 9,
-    col2: 4
+    years: 9,
+    average: 4,
+    name:10
   },
   {
-    col1: 7,
-    col2: 2
+    years: 7,
+    average: 2,
+    name:10
+  },
+  {
+    years: 5,
+    average: 4,
+    name:10
+  },
+  {
+    years: 3,
+    average: 2,
+    name:10
+  },
+  {
+    years: 9,
+    average: 4,
+    name:10
+  },
+  {
+    years: 7,
+    average: 2,
+    name:10
+  },
+  {
+    years: 5,
+    average: 4,
+    name:10
+  },
+  {
+    years: 3,
+    average: 2,
+    name:10
   }
 ];
+
