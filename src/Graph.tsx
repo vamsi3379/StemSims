@@ -1,19 +1,30 @@
-import React, { useState, useEffect } from "react";
-import ScatterPlot from "./components/ScatterPlot";
-import BarPlot from "./components/BarPlot";
-import PiePlot from "./components/PiePlot";
-import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
+import React, { useState, useEffect } from 'react';
+import ScatterPlot from './components/ScatterPlot';
+import BarPlot from './components/BarPlot';
+import PiePlot from './components/PiePlot';
+import {
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+} from '@mui/material';
 
-type GraphProps = {
-  exampleData: any[];
-};
+interface DataPoint {
+  [key: string]: number | string;
+}
 
-export function Graph({ exampleData }: GraphProps) {
+interface GraphProps {
+  exampleData: DataPoint[];
+  graphOptions: string[];
+}
+
+export function Graph({ exampleData, graphOptions }: GraphProps) {
   const [showLineGraph, setShowLineGraph] = useState(false);
   const [showBarGraph, setShowBarGraph] = useState(false);
   const [showPieGraph, setShowPieGraph] = useState(false);
-  const [xKey, setXKey] = useState("");
-  const [yKey, setYKey] = useState("");
+  const [xKey, setXKey] = useState('');
+  const [yKey, setYKey] = useState('');
   const [keyNames, setKeyNames] = useState<string[]>([]);
 
   useEffect(() => {
@@ -31,26 +42,17 @@ export function Graph({ exampleData }: GraphProps) {
     setShowPieGraph(false);
 
     // Show the respective graph based on xKey and yKey
-    if (xKey !== "" && yKey !== "") {
-      if (showLineGraph) setShowLineGraph(true);
-      else if (showBarGraph) setShowBarGraph(true);
-      else if (showPieGraph) setShowPieGraph(true);
+    if (xKey !== '' && yKey !== '' && graphOptions.includes('Line Graph')) {
+      setShowLineGraph(true);
+      
+    } else if (xKey !== '' && yKey !== '' && graphOptions.includes('Bar Graph')) {
+      setShowBarGraph(true);
+      
+    } else if (xKey !== '' && yKey !== '' && graphOptions.includes('Pie Chart')) {
+      setShowPieGraph(true);
     }
-  }, [xKey, yKey]);
+  }, [xKey, yKey, graphOptions]);
 
-  const handleXKeyChange = (event: SelectChangeEvent<string>) => {
-    setXKey(event.target.value);
-    setShowLineGraph(false);
-    setShowBarGraph(false);
-    setShowPieGraph(false);
-  };
-
-  const handleYKeyChange = (event: SelectChangeEvent<string>) => {
-    setYKey(event.target.value);
-    setShowLineGraph(false);
-    setShowBarGraph(false);
-    setShowPieGraph(false);
-  };
 
   const lineGraphClick = () => {
     setShowLineGraph(true);
@@ -70,9 +72,22 @@ export function Graph({ exampleData }: GraphProps) {
     setShowPieGraph(true);
   };
 
+  const handleXKeyChange = (event: SelectChangeEvent<string>) => {
+    setXKey(event.target.value);
+    setShowLineGraph(false);
+    setShowBarGraph(false);
+    setShowPieGraph(false);
+  };
+
+  const handleYKeyChange = (event: SelectChangeEvent<string>) => {
+    setYKey(event.target.value);
+    setShowLineGraph(false);
+    setShowBarGraph(false);
+    setShowPieGraph(false);
+  };
+
   return (
     <>
-
       {/* Dropdown for X Key */}
       <FormControl variant="outlined">
         <InputLabel htmlFor="x-key-select">X Key</InputLabel>
@@ -81,8 +96,8 @@ export function Graph({ exampleData }: GraphProps) {
           onChange={handleXKeyChange}
           label="X Key"
           inputProps={{
-            name: "xKey",
-            id: "x-key-select",
+            name: 'xKey',
+            id: 'x-key-select',
           }}
         >
           {keyNames.map((keyName) => (
@@ -101,8 +116,8 @@ export function Graph({ exampleData }: GraphProps) {
           onChange={handleYKeyChange}
           label="Y Key"
           inputProps={{
-            name: "yKey",
-            id: "y-key-select",
+            name: 'yKey',
+            id: 'y-key-select',
           }}
         >
           {keyNames.map((keyName) => (
@@ -114,9 +129,15 @@ export function Graph({ exampleData }: GraphProps) {
       </FormControl>
 
       <ul>
-        <button onClick={lineGraphClick}>Line Graph</button>
-        <button onClick={BarGraphClick}>Bar Graph</button>
-        <button onClick={PieGraphClick}>Pie Chart</button>
+        {graphOptions.includes('Line Graph') && (
+          <button onClick={lineGraphClick}>Line Graph</button>
+        )}
+        {graphOptions.includes('Bar Graph') && (
+          <button onClick={BarGraphClick}>Bar Graph</button>
+        )}
+        {graphOptions.includes('Pie Chart') && (
+          <button onClick={PieGraphClick}>Pie Chart</button>
+        )}
       </ul>
 
       {/* Graphs */}

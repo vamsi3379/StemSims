@@ -13,15 +13,15 @@ interface Props {
 
 const BarPlot: React.FC<Props> = ({ data, xKey, yKey }) => {
   const groupedData: DataPoint[] = data.reduce((result: DataPoint[], current: DataPoint) => {
-    const existingItem = result.find((item) => item[xKey] === current[xKey]);
-
+    const existingItem = result.find((item) => item[xKey] === current[xKey] && item[yKey] === current[yKey]);
+  
     if (!existingItem) {
-      // If the xKey does not exist, add it to the result array
+      // If the xKey and yKey combination does not exist, add it to the result array
       result.push({
         ...current,
       });
     }
-
+  
     return result;
   }, []);
 

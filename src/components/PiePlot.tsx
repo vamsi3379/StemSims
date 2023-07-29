@@ -3,29 +3,16 @@ import * as d3 from 'd3';
 import { PieArcDatum } from 'd3-shape';
 
 interface DataPoint {
-  [key: string]: number; // Make the DataPoint interface more generic
+  [key: string]: number | string; // Update the index signature to allow both number and string values
 }
 
 interface Props {
   data: DataPoint[];
-  xKey: string; // Specify the key for the years data (e.g., 'years')
-  yKey: string; // Specify the key for the average data (e.g., 'average')
+  xKey: string;
+  yKey: string;
 }
 
 const PiePlot: React.FC<Props> = ({ data, xKey, yKey }) => {
-  const groupedData: DataPoint[] = data.reduce((result: DataPoint[], current: DataPoint) => {
-    const existingItem = result.find((item) => item[xKey] === current[xKey]);
-
-    if (!existingItem) {
-      // If the xKey does not exist, add it to the result array
-      result.push({
-        ...current,
-      });
-    }
-
-    return result;
-  }, []);
-
   const svgRef = useRef<SVGSVGElement | null>(null);
 
   useEffect(() => {
@@ -46,14 +33,14 @@ const PiePlot: React.FC<Props> = ({ data, xKey, yKey }) => {
     const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
     const pie = d3
       .pie<DataPoint>()
-      .value((d) => d[yKey]) // Use the yKey prop to access the average data
+      .value((d) => Number(d[yKey])) // Use the yKey prop to access the average data as a number
       .sort(null);
 
     const arc = d3.arc<PieArcDatum<DataPoint>>()
       .outerRadius(radius - 10)
       .innerRadius(0);
 
-    const dataPie = pie(groupedData); // Use groupedData to create the pie chart
+    const dataPie = pie(data); // Use the original data to create the pie chart
 
     const arcGroup = svg.selectAll('.arc')
       .data(dataPie)
@@ -85,7 +72,7 @@ const PiePlot: React.FC<Props> = ({ data, xKey, yKey }) => {
       .attr('y', 9)
       .attr('dy', '0.35em')
       .text((d) => d.data[xKey].toString()); // Use xKey prop to access the years data
-  }, [data, groupedData, xKey, yKey]);
+  }, [data, xKey, yKey]);
 
   return <svg ref={svgRef}></svg>;
 };
