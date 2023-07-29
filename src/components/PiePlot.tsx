@@ -19,29 +19,28 @@ const PiePlot: React.FC<Props> = ({ data, xKey, yKey }) => {
   useEffect(() => {
     if (data.length === 0) return;
 
-    const margin = { top: 20, right: 20, bottom: 20, left: 20 };
-    const width = 800 - margin.left - margin.right;
-    const height = 800 - margin.top - margin.bottom;
+    const width = 500;
+    const height = 500;
     const radius = Math.min(width, height) / 2;
 
     const svg = d3
       .select(svgRef.current)
-      .attr('width', width + margin.left + margin.right)
-      .attr('height', height + margin.top + margin.bottom)
+      .attr('width', width)
+      .attr('height', height)
       .append('g')
       .attr('transform', `translate(${width / 2}, ${height / 2})`);
 
     const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
     const pie = d3
       .pie<DataPoint>()
-      .value((d) => Number(d[yKey])) // Use the yKey prop to access the average data as a number
+      .value((d) => Number(d[yKey]))
       .sort(null);
 
     const arc = d3.arc<PieArcDatum<DataPoint>>()
       .outerRadius(radius - 10)
       .innerRadius(0);
 
-    const dataPie = pie(data); // Use the original data to create the pie chart
+    const dataPie = pie(data);
 
     const arcGroup = svg.selectAll('.arc')
       .data(dataPie)
@@ -51,21 +50,21 @@ const PiePlot: React.FC<Props> = ({ data, xKey, yKey }) => {
 
     arcGroup.append('path')
       .attr('d', (d) => arc(d)!)
-      .attr('fill', (_, i) => colorScale(String(i))) // Convert index (i) to string
+      .attr('fill', (_, i) => colorScale(String(i)))
       .on('mouseover', (event, d) => {
         const tooltip = tooltipRef.current;
         if (tooltip) {
           tooltip.innerHTML = `${xKey}: ${d.data[xKey]}, ${yKey}: ${d.data[yKey]}`;
           tooltip.style.visibility = 'visible';
-          tooltip.style.left = `${event.pageX + 10}px`;
-          tooltip.style.top = `${event.pageY - 10}px`;
+          tooltip.style.left = `${event.clientX + 10}px`;
+          tooltip.style.top = `${event.clientY - 10}px`;
         }
       })
       .on('mousemove', (event) => {
         const tooltip = tooltipRef.current;
         if (tooltip) {
-          tooltip.style.left = `${event.pageX + 10}px`;
-          tooltip.style.top = `${event.pageY - 10}px`;
+          tooltip.style.left = `${event.clientX + 10}px`;
+          tooltip.style.top = `${event.clientY - 10}px`;
         }
       })
       .on('mouseout', () => {
@@ -75,26 +74,35 @@ const PiePlot: React.FC<Props> = ({ data, xKey, yKey }) => {
         }
       });
 
-    // Add legend
+    // Add text element with percentage value within each arc
+    arcGroup.append('text')
+      .attr('transform', (d) => `translate(${arc.centroid(d)})`)
+      .attr('text-anchor', 'middle')
+      .text((d) => `${Math.floor((d.endAngle - d.startAngle) / (2 * Math.PI) * 100)}%`) // Round down to integer
+      .style('font-size', '12px')
+      .style('fill', '#fff');
+
     const legend = svg.append('g')
-      .attr('transform', `translate(${width - margin.right}, 0)`)
+      .attr('transform', `translate(${width - 100}, 20)`)
       .selectAll('.legend')
       .data(dataPie)
       .enter()
       .append('g')
       .attr('class', 'legend')
-      .attr('transform', (_, i) => `translate(0, ${i * 20})`);
+      .attr('transform', (_, i) => `translate(0, ${i * 25})`);
 
     legend.append('rect')
-      .attr('width', 18)
-      .attr('height', 18)
+      .attr('width', 20)
+      .attr('height', 20)
       .attr('fill', (_, i) => colorScale(String(i)));
 
     legend.append('text')
-      .attr('x', 24)
-      .attr('y', 9)
+      .attr('x', 30)
+      .attr('y', 10)
       .attr('dy', '0.35em')
-      .text((d) => d.data[xKey].toString()); // Use xKey prop to access the years data
+      .text((d) => d.data[xKey].toString())
+      .style('font-size', '14px')
+      .style('fill', '#000');
   }, [data, xKey, yKey]);
 
   return (
@@ -107,8 +115,9 @@ const PiePlot: React.FC<Props> = ({ data, xKey, yKey }) => {
           visibility: 'hidden',
           backgroundColor: 'rgba(0, 0, 0, 0.8)',
           color: '#fff',
-          padding: '4px',
+          padding: '8px',
           borderRadius: '4px',
+          fontSize: '14px',
         }}
       ></div>
     </>

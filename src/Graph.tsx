@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import LinePlot from './components/LinePlot';
 import ScatterPlot from './components/ScatterPlot';
 import BarPlot from './components/BarPlot';
 import PiePlot from './components/PiePlot';
@@ -28,9 +29,11 @@ export function Graph({ exampleData, graphOptions }: GraphProps) {
   const [showLineGraph, setShowLineGraph] = useState(true);
   const [showBarGraph, setShowBarGraph] = useState(false);
   const [showPieGraph, setShowPieGraph] = useState(false);
+  const [showScatterGraph, setShowScatterGraph] = useState(false);
   const [xKey, setXKey] = useState('');
   const [yKey, setYKey] = useState('');
   const [keyNames, setKeyNames] = useState<string[]>([]);
+  const [headng, setHeading] = useState("");
 
   useEffect(() => {
     if (exampleData.length > 0) {
@@ -45,17 +48,22 @@ export function Graph({ exampleData, graphOptions }: GraphProps) {
     setShowLineGraph(false);
     setShowBarGraph(false);
     setShowPieGraph(false);
+    setShowScatterGraph(false);
 
     // Show the respective graph based on xKey and yKey
-    if (xKey !== '' && yKey !== '' && graphOptions.includes('Line Graph')) {
+    if (xKey !== '' && yKey !== '' && graphOptions.includes('Scatter Graph')) {
+      setShowScatterGraph(true);
+      setHeading('Scatter Graph')
+    }else if (xKey !== '' && yKey !== '' && graphOptions.includes('Line Graph')) {
       setShowLineGraph(true);
-      
+      setHeading('Line Graph')
     } else if (xKey !== '' && yKey !== '' && graphOptions.includes('Bar Graph')) {
       setShowBarGraph(true);
-      
+      setHeading('Bar Graph')
     } else if (xKey !== '' && yKey !== '' && graphOptions.includes('Pie Chart')) {
       setShowPieGraph(true);
-    }
+      setHeading('Pie Chart')
+    } 
   }, [xKey, yKey, graphOptions]);
 
 
@@ -63,18 +71,31 @@ export function Graph({ exampleData, graphOptions }: GraphProps) {
     setShowLineGraph(true);
     setShowBarGraph(false);
     setShowPieGraph(false);
+    setShowScatterGraph(false);
+    setHeading('Line Graph')
   };
 
   const BarGraphClick = () => {
     setShowLineGraph(false);
     setShowBarGraph(true);
     setShowPieGraph(false);
+    setShowScatterGraph(false);
+    setHeading('Bar Graph')
   };
 
   const PieGraphClick = () => {
     setShowLineGraph(false);
     setShowBarGraph(false);
     setShowPieGraph(true);
+    setShowScatterGraph(false);
+    setHeading('Pie Chart')
+  };
+  const ScatterGraphClick = () => {
+    setShowLineGraph(false);
+    setShowBarGraph(false);
+    setShowPieGraph(false);
+    setShowScatterGraph(true);
+    setHeading('Scatter Graph')
   };
 
   const handleXKeyChange = (event: SelectChangeEvent<string>) => {
@@ -103,7 +124,7 @@ export function Graph({ exampleData, graphOptions }: GraphProps) {
       >
         <Grid container spacing={1}>
             <Grid item xs={6} md={6}>
-              <FormControl variant="standard" sx={{ m: 1, minWidth: 150 }}>
+              <FormControl variant="outlined" sx={{ m: 1, minWidth: 150 }}>
                 <InputLabel htmlFor="x-key-select">X-axis</InputLabel>
                 <Select
                   value={xKey}
@@ -123,7 +144,7 @@ export function Graph({ exampleData, graphOptions }: GraphProps) {
               </FormControl>
             </Grid>
             <Grid item xs={6} md={6}>
-              <FormControl variant="standard" sx={{ m: 1, minWidth: 150 }}>
+              <FormControl variant="outlined" sx={{ m: 1, minWidth: 150 }}>
                   <InputLabel htmlFor="y-key-select">Y-axis</InputLabel>
                   <Select
                     value={yKey}
@@ -150,24 +171,54 @@ export function Graph({ exampleData, graphOptions }: GraphProps) {
       {graphOptions.length === 0 ? (
         <Typography variant="body1">To display a graph, please select the type of graph you want from the options available on the right side of the top navigation bar.</Typography>
       ) : (
+
         <Grid container spacing={2}>
           <Grid item xs={12}>
-            <ButtonGroup variant="outlined" aria-label="outlined button group" sx={{ bgcolor: '#f0f0f0', color: 'black' }}>
+            <ButtonGroup variant="outlined" aria-label="outlined button group">
+              {graphOptions.includes('Scatter Graph') && (
+                <Button
+                  onClick={ScatterGraphClick}
+                  sx={{ backgroundColor: showScatterGraph ? '#ccc' : 'transparent' }} // Change the background color when the button is selected
+                >
+                  Scatter Graph
+                </Button>
+              )}
               {graphOptions.includes('Line Graph') && (
-                <Button onClick={lineGraphClick} sx={{ color: 'black' }}>Line Graph</Button>
+                <Button
+                  onClick={lineGraphClick}
+                  sx={{ backgroundColor: showLineGraph ? '#ccc' : 'transparent' }} // Change the background color when the button is selected
+                >
+                  Line Graph
+                </Button>
               )}
               {graphOptions.includes('Bar Graph') && (
-                <Button onClick={BarGraphClick} sx={{ color: 'black' }}>Bar Graph</Button>
+                <Button
+                  onClick={BarGraphClick}
+                  sx={{ backgroundColor: showBarGraph ? '#ccc' : 'transparent' }} // Change the background color when the button is selected
+                >
+                  Bar Graph
+                </Button>
               )}
               {graphOptions.includes('Pie Chart') && (
-                <Button onClick={PieGraphClick} sx={{ color: 'black' }}>Pie Chart</Button>
+                <Button
+                  onClick={PieGraphClick}
+                  sx={{ backgroundColor: showPieGraph ? '#ccc' : 'transparent' }} // Change the background color when the button is selected
+                >
+                  Pie Chart
+                </Button>
               )}
             </ButtonGroup>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography variant="h4" component="h2">
+              {headng}
+            </Typography>
           </Grid>
 
           <Grid item xs={12}>
             {/* Graphs */}
-            {showLineGraph && <ScatterPlot data={exampleData} xKey={xKey} yKey={yKey} />}
+            {showLineGraph && <LinePlot data={exampleData} xKey={xKey} yKey={yKey} />}
+            {showScatterGraph && <ScatterPlot data={exampleData} xKey={xKey} yKey={yKey} />}
             {showBarGraph && <BarPlot data={exampleData} xKey={xKey} yKey={yKey} />}
             {showPieGraph && <PiePlot data={exampleData} xKey={xKey} yKey={yKey} />}
           </Grid>

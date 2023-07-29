@@ -29,14 +29,15 @@ const ScatterPlot: React.FC<Props> = ({ data, xKey, yKey }) => {
   const svgRef = useRef<SVGSVGElement | null>(null);
   const tooltipRef = useRef<HTMLDivElement | null>(null);
 
+  const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
 
   useEffect(() => {
     if (data.length === 0) return;
 
     const margin = { top: 20, right: 30, bottom: 30, left: 40 };
-    const width = 800 - margin.left - margin.right;
-    const height = 800 - margin.top - margin.bottom;
-
+    const width = 600 - margin.left - margin.right;
+    const height = 600 - margin.top - margin.bottom;
+    
     const svg = d3
       .select(svgRef.current)
       .attr('width', width + margin.left + margin.right)
@@ -55,7 +56,7 @@ const ScatterPlot: React.FC<Props> = ({ data, xKey, yKey }) => {
       .attr('cx', (d) => xScale(d[xKey] as number))
       .attr('cy', (d) => yScale(d[yKey] as number))
       .attr('r', 5)
-      .attr('fill', 'steelblue')
+      .attr('fill', (_, i) => colorScale(String(i)))
       .on('mouseover', (event, d) => {
         const tooltip = tooltipRef.current;
         if (tooltip) {
@@ -66,8 +67,7 @@ const ScatterPlot: React.FC<Props> = ({ data, xKey, yKey }) => {
         }
 
         d3.select(event.currentTarget)
-          .attr('r', 8) // Increase the circle size on mouseover to highlight the point
-          .attr('fill', 'orange'); // Change the fill color on mouseover to highlight the point
+          .attr('r', 8); // Increase the circle size on mouseover to highlight the point
       })
       .on('mousemove', (event) => {
         const tooltip = tooltipRef.current;
@@ -83,8 +83,7 @@ const ScatterPlot: React.FC<Props> = ({ data, xKey, yKey }) => {
         }
 
         d3.select(event.currentTarget)
-          .attr('r', 5) // Revert the circle size on mouseout
-          .attr('fill', 'steelblue'); // Revert the fill color on mouseout
+          .attr('r', 5); // Revert the circle size on mouseout
       });
 
     // Add x-axis
