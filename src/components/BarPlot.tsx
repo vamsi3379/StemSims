@@ -14,16 +14,20 @@ interface Props {
 const BarPlot: React.FC<Props> = ({ data, xKey, yKey }) => {
   const groupedData: DataPoint[] = data.reduce((result: DataPoint[], current: DataPoint) => {
     const existingItem = result.find((item) => item[xKey] === current[xKey] && item[yKey] === current[yKey]);
-
+  
     if (!existingItem) {
       // If the xKey and yKey combination does not exist, add it to the result array
       result.push({
         ...current,
       });
     }
-
+  
     return result;
   }, []);
+  
+  // Sort the groupedData array with respect to xKey in ascending order
+  groupedData.sort((a, b) => (a[xKey] > b[xKey] ? 1 : -1));
+  console.log(groupedData)
 
   const svgRef = useRef<SVGSVGElement | null>(null);
   const tooltipRef = useRef<HTMLDivElement | null>(null);
@@ -46,7 +50,7 @@ const BarPlot: React.FC<Props> = ({ data, xKey, yKey }) => {
       .attr('transform', `translate(${margin.left}, ${margin.top})`);
 
     const xScale = d3.scaleBand()
-      .domain(data.map((d) => d[xKey].toString())) // Use the xKey prop to access the x-axis data
+      .domain(groupedData.map((d) => d[xKey].toString())) // Use the xKey prop to access the x-axis data
       .range([0, width])
       .padding(0.1);
 

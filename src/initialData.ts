@@ -1,43 +1,23 @@
-export const exampleData: Array<any> = [
-  {
-    years: 9,
-    average: 4,
-    name:10
-  },
-  {
-    years: 7,
-    average: 2,
-    name:10
-  },
-  {
-    years: 5,
-    average: 4,
-    name:10
-  },
-  {
-    years: 3,
-    average: 2,
-    name:10
-  },
-  {
-    years: 9,
-    average: 4,
-    name:10
-  },
-  {
-    years: 7,
-    average: 2,
-    name:10
-  },
-  {
-    years: 5,
-    average: 4,
-    name:10
-  },
-  {
-    years: 15,
-    average: 2,
-    name:10
-  }
-];
-
+export const exampleData: Array<any> = 
+[
+  { "x": 9, "y": 4, "name": 10 },
+  { "x": 7, "y": 2, "name": 10 },
+  { "x": 5, "y": 4, "name": 10 },
+  { "x": 3, "y": 2, "name": 10 },
+  { "x": 15, "y": 2, "name": 10 },
+  { "x": 2, "y": 7, "name": 10 },
+  { "x": 11, "y": 6, "name": 10 },
+  { "x": 19, "y": 10, "name": 10 },
+  { "x": 16, "y": 8, "name": 10 },
+  { "x": 10, "y": 1, "name": 10 },
+  { "x": 8, "y": 9, "name": 10 },
+  { "x": 12, "y": 3, "name": 10 },
+  { "x": 18, "y": 5, "name": 10 },
+  { "x": 4, "y": 6, "name": 10 },
+  { "x": 14, "y": 7, "name": 10 },
+  { "x": 13, "y": 3, "name": 10 },
+  { "x": 17, "y": 4, "name": 10 },
+  { "x": 6, "y": 5, "name": 10 },
+  { "x": 20, "y": 9, "name": 10 },
+  { "x": 1, "y": 8, "name": 10 }
+]

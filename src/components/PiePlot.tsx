@@ -25,10 +25,6 @@ const PiePlot: React.FC<Props> = ({ data, xKey, yKey }) => {
 
     return result;
   }, []);
-  
-  
-  
-  console.log(groupedData)
 
   const svgRef = useRef<SVGSVGElement | null>(null);
   const tooltipRef = useRef<HTMLDivElement | null>(null);
@@ -47,7 +43,11 @@ const PiePlot: React.FC<Props> = ({ data, xKey, yKey }) => {
       .append('g')
       .attr('transform', `translate(${width / 2}, ${height / 2})`);
 
-    const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+    const colorScale = d3
+      .scaleSequential()
+      .interpolator(d3.interpolateWarm)
+      .domain([0, groupedData.length - 1]); // Adjust the domain to use groupedData length minus 1
+
     const pie = d3
       .pie<DataPoint>()
       .value((d) => Number(d[yKey]))
@@ -67,7 +67,7 @@ const PiePlot: React.FC<Props> = ({ data, xKey, yKey }) => {
 
     arcGroup.append('path')
       .attr('d', (d) => arc(d)!)
-      .attr('fill', (_, i) => colorScale(String(i)))
+      .attr('fill', (_, i) => colorScale(i)) // Use the numeric index directly
       .on('mouseover', (event, d) => {
         const tooltip = tooltipRef.current;
         if (tooltip) {
@@ -111,8 +111,8 @@ const PiePlot: React.FC<Props> = ({ data, xKey, yKey }) => {
     legend.append('rect')
       .attr('width', 20)
       .attr('height', 20)
-      .attr('fill', (_, i) => colorScale(String(i)));
-
+      .attr('fill', (_, i) => colorScale(i)) // Use the numeric index directly
+      
     legend.append('text')
       .attr('x', 30)
       .attr('y', 10)
@@ -120,6 +120,7 @@ const PiePlot: React.FC<Props> = ({ data, xKey, yKey }) => {
       .text((d) => d.data[xKey].toString())
       .style('font-size', '14px')
       .style('fill', '#000');
+
   }, [groupedData, xKey, yKey]);
 
   return (
