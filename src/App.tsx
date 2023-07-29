@@ -13,7 +13,7 @@ const App: React.FC = () => {
   return (
     <React.Fragment>
       <NavBar
-        options={['Line Graph', 'Scatter Graph', 'Bar Graph', 'Pie Chart']}
+        options={['Scatter Plot', 'Line Graph', 'Bar Graph', 'Pie Chart']}
         selectedOption={selectedOptions}
         onOptionChange={handleOptionChange}
       />

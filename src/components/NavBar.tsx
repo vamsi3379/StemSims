@@ -3,10 +3,15 @@ import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import MenuItem from '@mui/material/MenuItem';
-import Menu from '@mui/material/Menu';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import Checkbox from '@mui/material/Checkbox';
 import ListItemText from '@mui/material/ListItemText';
+import IconButton from '@mui/material/IconButton';
+import SettingsIcon from '@mui/icons-material/Settings';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import Button from '@mui/material/Button';
+import Switch from '@mui/material/Switch';
 
 interface NavBarProps {
   options: string[];
@@ -15,63 +20,51 @@ interface NavBarProps {
 }
 
 const NavBar: React.FC<NavBarProps> = ({ options, selectedOption, onOptionChange }) => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [modalOpen, setModalOpen] = useState(false); // New state to track modal open/closed
 
-  const handleOptionChange = (event: SelectChangeEvent<string | string[]>) => {
-    const selectedValue = event.target.value;
-    const newSelectedOption = Array.isArray(selectedValue)
-      ? selectedValue // Already an array, no need to convert
-      : [selectedValue]; // Convert single string to an array
-    onOptionChange(newSelectedOption);
+  const handleModalOpen = () => {
+    setModalOpen(true);
   };
 
-  const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
+  const handleModalClose = () => {
+    setModalOpen(false);
   };
 
   return (
     <AppBar position="static">
       <Toolbar>
-        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+        <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontFamily: 'avenir next' }}>
           Plot Graph
         </Typography>
         <div>
-          <Select
-            labelId="demo-multiple-name-label"
-            id="demo-multiple-name"
-            multiple // Set the multiple prop to true for multiple select
-            value={selectedOption}
-            onChange={handleOptionChange}
-            open={Boolean(anchorEl)}
-            onClose={handleMenuClose}
-            onOpen={handleMenuOpen as any}
-            renderValue={(selected) => {
-              if (selected.length === 0) {
-                return 'Modify Graph Options';
-              } else {
-                return selected.join(', & ');
-              }
-            }}
-            MenuProps={{ // Use MenuProps to customize the appearance of the dropdown menu
-              PaperProps: {
-                style: {
-                  maxHeight: 300,
-                  width: 250,
-                },
-              },
-            }}
-          >
-            {options.map((option) => (
-              <MenuItem key={option} value={option}>
-                <Checkbox checked={selectedOption.indexOf(option) > -1} />
-                <ListItemText primary={option} />
-              </MenuItem>
-            ))}
-          </Select>
+          {/* Settings button */}
+          <IconButton onClick={handleModalOpen} color="inherit">
+            <SettingsIcon />
+          </IconButton>
+          <Dialog open={modalOpen} onClose={handleModalClose}>
+            {/* Use DialogTitle with fontFamily set to 'avenir next' */}
+            <DialogTitle sx={{ fontFamily: 'avenir next' }}>Admin Functionality</DialogTitle>
+            <DialogContent sx={{ fontFamily: 'avenir next' }}>
+              {options.map((option) => (
+                <MenuItem key={option} sx={{ fontFamily: 'avenir next' }}>
+                  <ListItemText  primary={option} sx={{ fontFamily: 'avenir next' }} />
+                  <Switch
+                    color='secondary'
+                    checked={selectedOption.indexOf(option) > -1}
+                    onChange={() => {
+                      const newSelectedOption = selectedOption.includes(option)
+                        ? selectedOption.filter((item) => item !== option)
+                        : [...selectedOption, option];
+                      onOptionChange(newSelectedOption);
+                    }}
+                  />
+                </MenuItem>
+              ))}
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleModalClose} sx={{ fontFamily: 'avenir next' }}>Close</Button>
+            </DialogActions>
+          </Dialog>
         </div>
       </Toolbar>
     </AppBar>

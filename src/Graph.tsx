@@ -33,14 +33,14 @@ export function Graph({ exampleData, graphOptions }: GraphProps) {
   const [xKey, setXKey] = useState('');
   const [yKey, setYKey] = useState('');
   const [keyNames, setKeyNames] = useState<string[]>([]);
-  const [headng, setHeading] = useState('');
+  const [headng, setHeading] = useState(graphOptions[0]);
 
   useEffect(() => {
     if (exampleData.length > 0) {
       const columns = Object.keys(exampleData[0]);
       setKeyNames(columns);
-      setXKey(columns[0]); // Assuming the first column name is xKey
-      setYKey(columns[1]); // Assuming the second column name is yKey
+      setXKey(columns[0]);
+      setYKey(columns[1]);
     }
   }, [exampleData]);
 
@@ -50,10 +50,9 @@ export function Graph({ exampleData, graphOptions }: GraphProps) {
     setShowPieGraph(false);
     setShowScatterGraph(false);
 
-    // Show the respective graph based on xKey and yKey
-    if (xKey !== '' && yKey !== '' && graphOptions.includes('Scatter Graph')) {
+    if (xKey !== '' && yKey !== '' && graphOptions.includes('Scatter Plot')) {
       setShowScatterGraph(true);
-      setHeading('Scatter Graph');
+      setHeading('Scatter Plot');
     } else if (xKey !== '' && yKey !== '' && graphOptions.includes('Line Graph')) {
       setShowLineGraph(true);
       setHeading('Line Graph');
@@ -66,63 +65,54 @@ export function Graph({ exampleData, graphOptions }: GraphProps) {
     }
   }, [xKey, yKey, graphOptions]);
 
+  const changeShow = (a:boolean, b:boolean, c:boolean, d:boolean) => {
+    setShowLineGraph(a);
+    setShowBarGraph(b);
+    setShowPieGraph(c);
+    setShowScatterGraph(d);
+  }
+
   const lineGraphClick = () => {
-    setShowLineGraph(true);
-    setShowBarGraph(false);
-    setShowPieGraph(false);
-    setShowScatterGraph(false);
+    changeShow(true,false, false,false)
     setHeading('Line Graph');
   };
 
   const BarGraphClick = () => {
-    setShowLineGraph(false);
-    setShowBarGraph(true);
-    setShowPieGraph(false);
-    setShowScatterGraph(false);
+    changeShow(false,true, false,false)
     setHeading('Bar Graph');
   };
 
   const PieGraphClick = () => {
-    setShowLineGraph(false);
-    setShowBarGraph(false);
-    setShowPieGraph(true);
-    setShowScatterGraph(false);
+    changeShow(false,false, true,false)
     setHeading('Pie Chart');
   };
 
   const ScatterGraphClick = () => {
-    setShowLineGraph(false);
-    setShowBarGraph(false);
-    setShowPieGraph(false);
-    setShowScatterGraph(true);
-    setHeading('Scatter Graph');
+    changeShow(false,false, false,true)
+    setHeading('Scatter Plot');
   };
+  
 
   const handleXKeyChange = (event: SelectChangeEvent<string>) => {
     setXKey(event.target.value);
-    setShowLineGraph(false);
-    setShowBarGraph(false);
-    setShowPieGraph(false);
+    changeShow(false,false, false,false)
   };
 
   const handleYKeyChange = (event: SelectChangeEvent<string>) => {
     setYKey(event.target.value);
-    setShowLineGraph(false);
-    setShowBarGraph(false);
-    setShowPieGraph(false);
+    changeShow(false,false, false,false)
   };
 
   return (
-    <Grid container spacing={2} justifyContent="center"> {/* Center the main container */}
-      {/* Dropdown for X Key and Y Key in a single row */}
+    <Grid container spacing={2} justifyContent="center">
       <Grid item xs={12} sx={{ textAlign: 'center' }}>
         <Box
           sx={{
             width: 400,
             height: 120,
             marginTop: '24px',
-            display: 'inline-flex', // Use inline-flex to place the items in a single row
-            justifyContent: 'space-between', // Add space between X and Y dropdowns
+            display: 'inline-flex',
+            justifyContent: 'space-between',
           }}
         >
           <FormControl variant="outlined" sx={{ minWidth: 150 }}>
@@ -169,8 +159,8 @@ export function Graph({ exampleData, graphOptions }: GraphProps) {
 
       {graphOptions.length === 0 ? (
         <Grid item xs={12} sx={{ textAlign: 'center' }}>
-          <Typography variant="body1">
-            To display a graph, please select the type of graph you want from the options available on the right side of
+          <Typography variant="body1" sx={{ fontFamily: 'avenir next' }}>
+            To display a graph, please select modify the settings you want from the options available on the right side of
             the top navigation bar.
           </Typography>
         </Grid>
@@ -178,18 +168,18 @@ export function Graph({ exampleData, graphOptions }: GraphProps) {
         <Grid container spacing={2}>
           <Grid item xs={12} sx={{ textAlign: 'center' }}>
             <ButtonGroup variant="outlined" aria-label="outlined button group">
-              {graphOptions.includes('Scatter Graph') && (
+              {graphOptions.includes('Scatter Plot') && (
                 <Button
                   onClick={ScatterGraphClick}
-                  sx={{ backgroundColor: showScatterGraph ? '#ccc' : 'transparent' }} // Change the background color when the button is selected
+                  sx={{ backgroundColor: showScatterGraph ? '#ccc' : 'transparent', fontFamily: 'avenir next' }} 
                 >
-                  Scatter Graph
+                  Scatter Plot
                 </Button>
               )}
               {graphOptions.includes('Line Graph') && (
                 <Button
                   onClick={lineGraphClick}
-                  sx={{ backgroundColor: showLineGraph ? '#ccc' : 'transparent' }} // Change the background color when the button is selected
+                  sx={{ backgroundColor: showLineGraph ? '#ccc' : 'transparent', fontFamily: 'avenir next' }}
                 >
                   Line Graph
                 </Button>
@@ -197,7 +187,7 @@ export function Graph({ exampleData, graphOptions }: GraphProps) {
               {graphOptions.includes('Bar Graph') && (
                 <Button
                   onClick={BarGraphClick}
-                  sx={{ backgroundColor: showBarGraph ? '#ccc' : 'transparent' }} // Change the background color when the button is selected
+                  sx={{ backgroundColor: showBarGraph ? '#ccc' : 'transparent', fontFamily: 'avenir next' }}
                 >
                   Bar Graph
                 </Button>
@@ -205,7 +195,7 @@ export function Graph({ exampleData, graphOptions }: GraphProps) {
               {graphOptions.includes('Pie Chart') && (
                 <Button
                   onClick={PieGraphClick}
-                  sx={{ backgroundColor: showPieGraph ? '#ccc' : 'transparent' }} // Change the background color when the button is selected
+                  sx={{ backgroundColor: showPieGraph ? '#ccc' : 'transparent', fontFamily: 'avenir next' }}
                 >
                   Pie Chart
                 </Button>
@@ -213,7 +203,7 @@ export function Graph({ exampleData, graphOptions }: GraphProps) {
             </ButtonGroup>
           </Grid>
           <Grid item xs={12} sx={{ textAlign: 'center' }}>
-            <Typography variant="h4" component="h2">
+            <Typography variant="h4" component="h2" sx={{ fontFamily: 'avenir next' }}>
               {headng}
             </Typography>
           </Grid>

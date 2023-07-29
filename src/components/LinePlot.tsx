@@ -2,29 +2,37 @@ import React, { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 
 interface DataPoint {
-  [key: string]: number | string; // Make the DataPoint interface more generic
+  [key: string]: number | string;
 }
 
 interface Props {
   data: DataPoint[];
-  xKey: string; // Specify the key for the x-axis data (e.g., 'years')
-  yKey: string; // Specify the key for the y-axis data (e.g., 'average')
+  xKey: string;
+  yKey: string;
 }
 
 const LinePlot: React.FC<Props> = ({ data, xKey, yKey }) => {
-  // Group the data based on the chosen xKey and yKey
   const groupedData: DataPoint[] = data.reduce((result: DataPoint[], current: DataPoint) => {
     const existingItem = result.find((item) => item[xKey] === current[xKey] && item[yKey] === current[yKey]);
-
+  
     if (!existingItem) {
-      // If the xKey and yKey combination does not exist, add it to the result array
       result.push({
         ...current,
       });
     }
-
+  
     return result;
   }, []);
+  
+  groupedData.sort((a, b) => {
+    if (a[xKey] === b[xKey]) {
+      return a[yKey] > b[yKey] ? 1 : -1;
+    } else {
+      return a[xKey] > b[xKey] ? 1 : -1;
+    }
+  });
+  
+  console.log(groupedData);
 
   const svgRef = useRef<SVGSVGElement | null>(null);
   const tooltipRef = useRef<HTMLDivElement | null>(null);
@@ -34,10 +42,10 @@ const LinePlot: React.FC<Props> = ({ data, xKey, yKey }) => {
   useEffect(() => {
     if (data.length === 0) return;
 
-    const margin = { top: 20, right: 30, bottom: 30, left: 40 };
-    const width = 600 - margin.left - margin.right;
+    const margin = { top: 20, right: 30, bottom: 60, left: 60 };
+    const width = 700 - margin.left - margin.right;
     const height = 600 - margin.top - margin.bottom;
-    
+
     const svg = d3
       .select(svgRef.current)
       .attr('width', width + margin.left + margin.right)
@@ -56,8 +64,8 @@ const LinePlot: React.FC<Props> = ({ data, xKey, yKey }) => {
       .append('path')
       .datum(groupedData)
       .attr('fill', 'none')
-      .attr('stroke', colorScale(String(0))) // Set stroke color for the line
-      .attr('stroke-width', 2) // Set stroke width for the line
+      .attr('stroke', colorScale(String(0)))
+      .attr('stroke-width', 2)
       .attr('d', line);
 
     // Add circles for each data point
@@ -79,7 +87,7 @@ const LinePlot: React.FC<Props> = ({ data, xKey, yKey }) => {
           tooltip.style.top = `${event.pageY - 10}px`;
         }
 
-        d3.select(event.currentTarget).attr('r', 8); // Increase the circle size on mouseover to highlight the point
+        d3.select(event.currentTarget).attr('r', 10);
       })
       .on('mousemove', (event) => {
         const tooltip = tooltipRef.current;
@@ -94,7 +102,7 @@ const LinePlot: React.FC<Props> = ({ data, xKey, yKey }) => {
           tooltip.style.visibility = 'hidden';
         }
 
-        d3.select(event.currentTarget).attr('r', 5); // Revert the circle size on mouseout
+        d3.select(event.currentTarget).attr('r', 5);
       });
 
     // Add x-axis
@@ -105,7 +113,24 @@ const LinePlot: React.FC<Props> = ({ data, xKey, yKey }) => {
     const yAxis = d3.axisLeft(yScale);
     svg.append('g').call(yAxis);
 
-  }, [data, groupedData, xKey, yKey]);
+    // Add x-axis label
+    svg
+      .append('text')
+      .attr('x', width / 2)
+      .attr('y', height + margin.bottom / 2)
+      .style('text-anchor', 'middle')
+      .text("x-axis: "+ xKey);
+
+    // Add y-axis label
+    svg
+      .append('text')
+      .attr('transform', `rotate(-90)`)
+      .attr('x', -height / 2)
+      .attr('y', -margin.left / 2)
+      .style('text-anchor', 'middle')
+      .text("y-axis: "+ yKey);
+
+  }, [data, groupedData, xKey, yKey, colorScale]);
 
   return (
     <>

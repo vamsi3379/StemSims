@@ -3,7 +3,7 @@ import * as d3 from 'd3';
 import { PieArcDatum } from 'd3-shape';
 
 interface DataPoint {
-  [key: string]: number | string; // Update the index signature to allow both number and string values
+  [key: string]: number | string;
 }
 
 interface Props {
@@ -17,7 +17,6 @@ const PiePlot: React.FC<Props> = ({ data, xKey, yKey }) => {
     const existingItem = result.find((item) => item[xKey] === current[xKey] && item[yKey] === current[yKey]);
 
     if (!existingItem) {
-      // If the xKey and yKey combination does not exist, add it to the result array
       result.push({
         ...current,
       });
@@ -32,8 +31,8 @@ const PiePlot: React.FC<Props> = ({ data, xKey, yKey }) => {
   useEffect(() => {
     if (groupedData.length === 0) return;
 
-    const width = 500;
-    const height = 500;
+    const width = 600;
+    const height = 600;
     const radius = Math.min(width, height) / 2;
 
     const svg = d3
@@ -46,7 +45,7 @@ const PiePlot: React.FC<Props> = ({ data, xKey, yKey }) => {
     const colorScale = d3
       .scaleSequential()
       .interpolator(d3.interpolateWarm)
-      .domain([0, groupedData.length - 1]); // Adjust the domain to use groupedData length minus 1
+      .domain([0, groupedData.length - 1]);
 
     const pie = d3
       .pie<DataPoint>()
@@ -57,7 +56,7 @@ const PiePlot: React.FC<Props> = ({ data, xKey, yKey }) => {
       .outerRadius(radius - 10)
       .innerRadius(0);
 
-    const dataPie = pie(groupedData); // Use the updated groupedData
+    const dataPie = pie(groupedData);
 
     const arcGroup = svg.selectAll('.arc')
       .data(dataPie)
@@ -67,7 +66,7 @@ const PiePlot: React.FC<Props> = ({ data, xKey, yKey }) => {
 
     arcGroup.append('path')
       .attr('d', (d) => arc(d)!)
-      .attr('fill', (_, i) => colorScale(i)) // Use the numeric index directly
+      .attr('fill', (_, i) => colorScale(i))
       .on('mouseover', (event, d) => {
         const tooltip = tooltipRef.current;
         if (tooltip) {
@@ -89,15 +88,25 @@ const PiePlot: React.FC<Props> = ({ data, xKey, yKey }) => {
         if (tooltip) {
           tooltip.style.visibility = 'hidden';
         }
+      })
+      .transition() 
+      .duration(800)
+      .attrTween('d', (d: any) => {
+        const interpolate = d3.interpolate({ startAngle: 0, endAngle: 0 }, d);
+        return (t: any) => arc(interpolate(t))!;
       });
 
-    // Add text element with percentage value within each arc
     arcGroup.append('text')
       .attr('transform', (d) => `translate(${arc.centroid(d)})`)
       .attr('text-anchor', 'middle')
-      .text((d) => `${Math.floor((d.endAngle - d.startAngle) / (2 * Math.PI) * 100)}%`) // Round down to integer
+      .text((d) => `${Math.floor((d.endAngle - d.startAngle) / (2 * Math.PI) * 100)}%`)
       .style('font-size', '12px')
-      .style('fill', '#fff');
+      .style('fill', '#fff')
+      .style('opacity', 0)
+      .transition()
+      .delay(400)
+      .duration(200)
+      .style('opacity', 1);
 
     const legend = svg.append('g')
       .attr('transform', `translate(${width - 100}, 20)`)
@@ -111,8 +120,8 @@ const PiePlot: React.FC<Props> = ({ data, xKey, yKey }) => {
     legend.append('rect')
       .attr('width', 20)
       .attr('height', 20)
-      .attr('fill', (_, i) => colorScale(i)) // Use the numeric index directly
-      
+      .attr('fill', (_, i) => colorScale(i)) 
+
     legend.append('text')
       .attr('x', 30)
       .attr('y', 10)
