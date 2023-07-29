@@ -36,9 +36,11 @@ const BarPlot: React.FC<Props> = ({ data, xKey, yKey }) => {
   useEffect(() => {
     if (groupedData.length === 0) return;
 
+    const screenWidth = window.innerWidth;
     const margin = { top: 20, right: 30, bottom: 60, left: 60 };
-    const width = 700 - margin.left - margin.right;
+    const width = screenWidth < 700 ? screenWidth - margin.left - margin.right : 700 - margin.left - margin.right;
     const height = 600 - margin.top - margin.bottom;
+    
     const svg = d3
       .select(svgRef.current)
       .attr('width', width + margin.left + margin.right)

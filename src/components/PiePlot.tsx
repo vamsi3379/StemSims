@@ -31,8 +31,10 @@ const PiePlot: React.FC<Props> = ({ data, xKey, yKey }) => {
   useEffect(() => {
     if (groupedData.length === 0) return;
 
-    const width = 600;
-    const height = 600;
+    const screenWidth = window.innerWidth;
+    const margin = { top: 20, right: 30, bottom: 60, left: 60 };
+    const width = screenWidth < 600 ? screenWidth - margin.left - margin.right : 700 - margin.left - margin.right;
+    const height = 600 - margin.top - margin.bottom;
     const radius = Math.min(width, height) / 2;
 
     const svg = d3
