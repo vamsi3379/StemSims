@@ -69,6 +69,8 @@ const BarPlot: React.FC<Props> = ({ data, xKey, yKey }) => {
           tooltip.style.left = `${event.pageX + 10}px`;
           tooltip.style.top = `${event.pageY - 10}px`;
         }
+
+        d3.select(event.currentTarget).attr('fill', 'orange'); // Highlight the bar on mouseover
       })
       .on('mousemove', (event) => {
         const tooltip = tooltipRef.current;
@@ -77,11 +79,13 @@ const BarPlot: React.FC<Props> = ({ data, xKey, yKey }) => {
           tooltip.style.top = `${event.pageY - 10}px`;
         }
       })
-      .on('mouseout', () => {
+      .on('mouseout', (event, d) => {
         const tooltip = tooltipRef.current;
         if (tooltip) {
           tooltip.style.visibility = 'hidden';
         }
+
+        d3.select(event.currentTarget).attr('fill', 'steelblue'); // Revert the fill color on mouseout
       });
 
     // Add x-axis

@@ -29,6 +29,7 @@ const ScatterPlot: React.FC<Props> = ({ data, xKey, yKey }) => {
   const svgRef = useRef<SVGSVGElement | null>(null);
   const tooltipRef = useRef<HTMLDivElement | null>(null);
 
+
   useEffect(() => {
     if (data.length === 0) return;
 
@@ -63,6 +64,10 @@ const ScatterPlot: React.FC<Props> = ({ data, xKey, yKey }) => {
           tooltip.style.left = `${event.pageX + 10}px`;
           tooltip.style.top = `${event.pageY - 10}px`;
         }
+
+        d3.select(event.currentTarget)
+          .attr('r', 8) // Increase the circle size on mouseover to highlight the point
+          .attr('fill', 'orange'); // Change the fill color on mouseover to highlight the point
       })
       .on('mousemove', (event) => {
         const tooltip = tooltipRef.current;
@@ -71,11 +76,15 @@ const ScatterPlot: React.FC<Props> = ({ data, xKey, yKey }) => {
           tooltip.style.top = `${event.pageY - 10}px`;
         }
       })
-      .on('mouseout', () => {
+      .on('mouseout', (event, d) => {
         const tooltip = tooltipRef.current;
         if (tooltip) {
           tooltip.style.visibility = 'hidden';
         }
+
+        d3.select(event.currentTarget)
+          .attr('r', 5) // Revert the circle size on mouseout
+          .attr('fill', 'steelblue'); // Revert the fill color on mouseout
       });
 
     // Add x-axis
@@ -85,6 +94,7 @@ const ScatterPlot: React.FC<Props> = ({ data, xKey, yKey }) => {
     // Add y-axis
     const yAxis = d3.axisLeft(yScale);
     svg.append('g').call(yAxis);
+
   }, [data, groupedData, xKey, yKey]);
 
   return (
