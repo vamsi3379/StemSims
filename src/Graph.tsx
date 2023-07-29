@@ -11,7 +11,8 @@ import {
   Grid,
   Box,
   Button,
-  ButtonGroup
+  Typography,
+  ButtonGroup,
 } from '@mui/material';
 
 interface DataPoint {
@@ -24,7 +25,7 @@ interface GraphProps {
 }
 
 export function Graph({ exampleData, graphOptions }: GraphProps) {
-  const [showLineGraph, setShowLineGraph] = useState(false);
+  const [showLineGraph, setShowLineGraph] = useState(true);
   const [showBarGraph, setShowBarGraph] = useState(false);
   const [showPieGraph, setShowPieGraph] = useState(false);
   const [xKey, setXKey] = useState('');
@@ -103,7 +104,7 @@ export function Graph({ exampleData, graphOptions }: GraphProps) {
         <Grid container spacing={1}>
             <Grid item xs={6} md={6}>
               <FormControl variant="standard" sx={{ m: 1, minWidth: 150 }}>
-                <InputLabel htmlFor="x-key-select">X Key</InputLabel>
+                <InputLabel htmlFor="x-key-select">X-axis</InputLabel>
                 <Select
                   value={xKey}
                   onChange={handleXKeyChange}
@@ -123,7 +124,7 @@ export function Graph({ exampleData, graphOptions }: GraphProps) {
             </Grid>
             <Grid item xs={6} md={6}>
               <FormControl variant="standard" sx={{ m: 1, minWidth: 150 }}>
-                  <InputLabel htmlFor="y-key-select">Y Key</InputLabel>
+                  <InputLabel htmlFor="y-key-select">Y-axis</InputLabel>
                   <Select
                     value={yKey}
                     onChange={handleYKeyChange}
@@ -147,28 +148,32 @@ export function Graph({ exampleData, graphOptions }: GraphProps) {
 
       {/* Dropdown for Y Key */}
       
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <ButtonGroup variant="outlined" aria-label="outlined button group" sx={{ bgcolor: '#f0f0f0', color: 'black' }}>
-            {graphOptions.includes('Line Graph') && (
-              <Button onClick={lineGraphClick} sx={{ color: 'black' }}>Line Graph</Button>
-            )}
-            {graphOptions.includes('Bar Graph') && (
-              <Button onClick={BarGraphClick} sx={{ color: 'black' }}>Bar Graph</Button>
-            )}
-            {graphOptions.includes('Pie Chart') && (
-              <Button onClick={PieGraphClick} sx={{ color: 'black' }}>Pie Chart</Button>
-            )}
-          </ButtonGroup>
-        </Grid>
+      {graphOptions.length === 0 ? (
+        <Typography variant="body1">To display a graph, please select the type of graph you want from the options available on the right side of the top navigation bar.</Typography>
+      ) : (
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <ButtonGroup variant="outlined" aria-label="outlined button group" sx={{ bgcolor: '#f0f0f0', color: 'black' }}>
+              {graphOptions.includes('Line Graph') && (
+                <Button onClick={lineGraphClick} sx={{ color: 'black' }}>Line Graph</Button>
+              )}
+              {graphOptions.includes('Bar Graph') && (
+                <Button onClick={BarGraphClick} sx={{ color: 'black' }}>Bar Graph</Button>
+              )}
+              {graphOptions.includes('Pie Chart') && (
+                <Button onClick={PieGraphClick} sx={{ color: 'black' }}>Pie Chart</Button>
+              )}
+            </ButtonGroup>
+          </Grid>
 
-        <Grid item xs={12}>
-          {/* Graphs */}
-          {showLineGraph && <ScatterPlot data={exampleData} xKey={xKey} yKey={yKey} />}
-          {showBarGraph && <BarPlot data={exampleData} xKey={xKey} yKey={yKey} />}
-          {showPieGraph && <PiePlot data={exampleData} xKey={xKey} yKey={yKey} />}
+          <Grid item xs={12}>
+            {/* Graphs */}
+            {showLineGraph && <ScatterPlot data={exampleData} xKey={xKey} yKey={yKey} />}
+            {showBarGraph && <BarPlot data={exampleData} xKey={xKey} yKey={yKey} />}
+            {showPieGraph && <PiePlot data={exampleData} xKey={xKey} yKey={yKey} />}
+          </Grid>
         </Grid>
-      </Grid>
+      )}
     </>
   );
 }

@@ -5,11 +5,13 @@ import Typography from '@mui/material/Typography';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Checkbox from '@mui/material/Checkbox';
+import ListItemText from '@mui/material/ListItemText';
 
 interface NavBarProps {
-    options: string[];
-    selectedOption: string[]; // Update to string[] to handle multiple selection
-    onOptionChange: (option: string[]) => void;
+  options: string[];
+  selectedOption: string[]; // Update to string[] to handle multiple selection
+  onOptionChange: (option: string[]) => void;
 }
 
 const NavBar: React.FC<NavBarProps> = ({ options, selectedOption, onOptionChange }) => {
@@ -47,10 +49,26 @@ const NavBar: React.FC<NavBarProps> = ({ options, selectedOption, onOptionChange
             open={Boolean(anchorEl)}
             onClose={handleMenuClose}
             onOpen={handleMenuOpen as any}
+            renderValue={(selected) => {
+              if (selected.length === 0) {
+                return 'Modify Graph Options';
+              } else {
+                return selected.join(', & ');
+              }
+            }}
+            MenuProps={{ // Use MenuProps to customize the appearance of the dropdown menu
+              PaperProps: {
+                style: {
+                  maxHeight: 300,
+                  width: 250,
+                },
+              },
+            }}
           >
             {options.map((option) => (
               <MenuItem key={option} value={option}>
-                {option}
+                <Checkbox checked={selectedOption.indexOf(option) > -1} />
+                <ListItemText primary={option} />
               </MenuItem>
             ))}
           </Select>
