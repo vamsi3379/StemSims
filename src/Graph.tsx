@@ -146,7 +146,6 @@ export function Graph({ exampleData, graphOptions }: GraphProps) {
         </Box>
       
 
-      {/* Dropdown for Y Key */}
       
       {graphOptions.length === 0 ? (
         <Typography variant="body1">To display a graph, please select the type of graph you want from the options available on the right side of the top navigation bar.</Typography>

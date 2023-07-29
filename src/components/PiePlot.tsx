@@ -14,6 +14,7 @@ interface Props {
 
 const PiePlot: React.FC<Props> = ({ data, xKey, yKey }) => {
   const svgRef = useRef<SVGSVGElement | null>(null);
+  const tooltipRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (data.length === 0) return;
@@ -50,7 +51,29 @@ const PiePlot: React.FC<Props> = ({ data, xKey, yKey }) => {
 
     arcGroup.append('path')
       .attr('d', (d) => arc(d)!)
-      .attr('fill', (_, i) => colorScale(String(i))); // Convert index (i) to string
+      .attr('fill', (_, i) => colorScale(String(i))) // Convert index (i) to string
+      .on('mouseover', (event, d) => {
+        const tooltip = tooltipRef.current;
+        if (tooltip) {
+          tooltip.innerHTML = `${xKey}: ${d.data[xKey]}, ${yKey}: ${d.data[yKey]}`;
+          tooltip.style.visibility = 'visible';
+          tooltip.style.left = `${event.pageX + 10}px`;
+          tooltip.style.top = `${event.pageY - 10}px`;
+        }
+      })
+      .on('mousemove', (event) => {
+        const tooltip = tooltipRef.current;
+        if (tooltip) {
+          tooltip.style.left = `${event.pageX + 10}px`;
+          tooltip.style.top = `${event.pageY - 10}px`;
+        }
+      })
+      .on('mouseout', () => {
+        const tooltip = tooltipRef.current;
+        if (tooltip) {
+          tooltip.style.visibility = 'hidden';
+        }
+      });
 
     // Add legend
     const legend = svg.append('g')
@@ -74,7 +97,22 @@ const PiePlot: React.FC<Props> = ({ data, xKey, yKey }) => {
       .text((d) => d.data[xKey].toString()); // Use xKey prop to access the years data
   }, [data, xKey, yKey]);
 
-  return <svg ref={svgRef}></svg>;
+  return (
+    <>
+      <svg ref={svgRef}></svg>
+      <div
+        ref={tooltipRef}
+        style={{
+          position: 'absolute',
+          visibility: 'hidden',
+          backgroundColor: 'rgba(0, 0, 0, 0.8)',
+          color: '#fff',
+          padding: '4px',
+          borderRadius: '4px',
+        }}
+      ></div>
+    </>
+  );
 };
 
 export default PiePlot;

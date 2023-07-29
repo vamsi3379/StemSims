@@ -14,18 +14,19 @@ interface Props {
 const BarPlot: React.FC<Props> = ({ data, xKey, yKey }) => {
   const groupedData: DataPoint[] = data.reduce((result: DataPoint[], current: DataPoint) => {
     const existingItem = result.find((item) => item[xKey] === current[xKey] && item[yKey] === current[yKey]);
-  
+
     if (!existingItem) {
       // If the xKey and yKey combination does not exist, add it to the result array
       result.push({
         ...current,
       });
     }
-  
+
     return result;
   }, []);
 
   const svgRef = useRef<SVGSVGElement | null>(null);
+  const tooltipRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (data.length === 0) return;
@@ -59,7 +60,29 @@ const BarPlot: React.FC<Props> = ({ data, xKey, yKey }) => {
       .attr('y', (d) => yScale(d[yKey] as number))
       .attr('width', xScale.bandwidth())
       .attr('height', (d) => height - yScale(d[yKey] as number))
-      .attr('fill', 'steelblue');
+      .attr('fill', 'steelblue')
+      .on('mouseover', (event, d) => {
+        const tooltip = tooltipRef.current;
+        if (tooltip) {
+          tooltip.innerHTML = `${xKey}: ${d[xKey]}, ${yKey}: ${d[yKey]}`;
+          tooltip.style.visibility = 'visible';
+          tooltip.style.left = `${event.pageX + 10}px`;
+          tooltip.style.top = `${event.pageY - 10}px`;
+        }
+      })
+      .on('mousemove', (event) => {
+        const tooltip = tooltipRef.current;
+        if (tooltip) {
+          tooltip.style.left = `${event.pageX + 10}px`;
+          tooltip.style.top = `${event.pageY - 10}px`;
+        }
+      })
+      .on('mouseout', () => {
+        const tooltip = tooltipRef.current;
+        if (tooltip) {
+          tooltip.style.visibility = 'hidden';
+        }
+      });
 
     // Add x-axis
     const xAxis = d3.axisBottom(xScale);
@@ -70,7 +93,22 @@ const BarPlot: React.FC<Props> = ({ data, xKey, yKey }) => {
     svg.append('g').call(yAxis);
   }, [data, groupedData, xKey, yKey]);
 
-  return <svg ref={svgRef}></svg>;
+  return (
+    <>
+      <svg ref={svgRef}></svg>
+      <div
+        ref={tooltipRef}
+        style={{
+          position: 'absolute',
+          visibility: 'hidden',
+          backgroundColor: 'rgba(0, 0, 0, 0.8)',
+          color: '#fff',
+          padding: '4px',
+          borderRadius: '4px',
+        }}
+      ></div>
+    </>
+  );
 };
 
 export default BarPlot;
