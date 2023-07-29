@@ -8,6 +8,10 @@ import {
   MenuItem,
   Select,
   SelectChangeEvent,
+  Grid,
+  Box,
+  Button,
+  ButtonGroup
 } from '@mui/material';
 
 interface DataPoint {
@@ -89,61 +93,82 @@ export function Graph({ exampleData, graphOptions }: GraphProps) {
   return (
     <>
       {/* Dropdown for X Key */}
-      <FormControl variant="outlined">
-        <InputLabel htmlFor="x-key-select">X Key</InputLabel>
-        <Select
-          value={xKey}
-          onChange={handleXKeyChange}
-          label="X Key"
-          inputProps={{
-            name: 'xKey',
-            id: 'x-key-select',
-          }}
-        >
-          {keyNames.map((keyName) => (
-            <MenuItem key={keyName} value={keyName}>
-              {keyName}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+      <Box
+        sx={{
+            width: 400,
+            height: 120,
+            marginTop: '24px',
+        }}
+      >
+        <Grid container spacing={1}>
+            <Grid item xs={6} md={6}>
+              <FormControl variant="standard" sx={{ m: 1, minWidth: 150 }}>
+                <InputLabel htmlFor="x-key-select">X Key</InputLabel>
+                <Select
+                  value={xKey}
+                  onChange={handleXKeyChange}
+                  label="X Key"
+                  inputProps={{
+                    name: 'xKey',
+                    id: 'x-key-select',
+                  }}
+                >
+                  {keyNames.map((keyName) => (
+                    <MenuItem key={keyName} value={keyName}>
+                      {keyName}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={6} md={6}>
+              <FormControl variant="standard" sx={{ m: 1, minWidth: 150 }}>
+                  <InputLabel htmlFor="y-key-select">Y Key</InputLabel>
+                  <Select
+                    value={yKey}
+                    onChange={handleYKeyChange}
+                    label="Y Key"
+                    inputProps={{
+                      name: 'yKey',
+                      id: 'y-key-select',
+                    }}
+                  >
+                    {keyNames.map((keyName) => (
+                      <MenuItem key={keyName} value={keyName}>
+                        {keyName}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+          </Grid>
+        </Box>
+      
 
       {/* Dropdown for Y Key */}
-      <FormControl variant="outlined">
-        <InputLabel htmlFor="y-key-select">Y Key</InputLabel>
-        <Select
-          value={yKey}
-          onChange={handleYKeyChange}
-          label="Y Key"
-          inputProps={{
-            name: 'yKey',
-            id: 'y-key-select',
-          }}
-        >
-          {keyNames.map((keyName) => (
-            <MenuItem key={keyName} value={keyName}>
-              {keyName}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+      
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <ButtonGroup variant="outlined" aria-label="outlined button group" sx={{ bgcolor: '#f0f0f0', color: 'black' }}>
+            {graphOptions.includes('Line Graph') && (
+              <Button onClick={lineGraphClick} sx={{ color: 'black' }}>Line Graph</Button>
+            )}
+            {graphOptions.includes('Bar Graph') && (
+              <Button onClick={BarGraphClick} sx={{ color: 'black' }}>Bar Graph</Button>
+            )}
+            {graphOptions.includes('Pie Chart') && (
+              <Button onClick={PieGraphClick} sx={{ color: 'black' }}>Pie Chart</Button>
+            )}
+          </ButtonGroup>
+        </Grid>
 
-      <ul>
-        {graphOptions.includes('Line Graph') && (
-          <button onClick={lineGraphClick}>Line Graph</button>
-        )}
-        {graphOptions.includes('Bar Graph') && (
-          <button onClick={BarGraphClick}>Bar Graph</button>
-        )}
-        {graphOptions.includes('Pie Chart') && (
-          <button onClick={PieGraphClick}>Pie Chart</button>
-        )}
-      </ul>
-
-      {/* Graphs */}
-      {showLineGraph && <ScatterPlot data={exampleData} xKey={xKey} yKey={yKey} />}
-      {showBarGraph && <BarPlot data={exampleData} xKey={xKey} yKey={yKey} />}
-      {showPieGraph && <PiePlot data={exampleData} xKey={xKey} yKey={yKey} />}
+        <Grid item xs={12}>
+          {/* Graphs */}
+          {showLineGraph && <ScatterPlot data={exampleData} xKey={xKey} yKey={yKey} />}
+          {showBarGraph && <BarPlot data={exampleData} xKey={xKey} yKey={yKey} />}
+          {showPieGraph && <PiePlot data={exampleData} xKey={xKey} yKey={yKey} />}
+        </Grid>
+      </Grid>
     </>
   );
 }
