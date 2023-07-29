@@ -35,7 +35,7 @@ export const exampleData: Array<any> = [
     name:10
   },
   {
-    years: 3,
+    years: 15,
     average: 2,
     name:10
   }

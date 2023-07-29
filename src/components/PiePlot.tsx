@@ -13,11 +13,28 @@ interface Props {
 }
 
 const PiePlot: React.FC<Props> = ({ data, xKey, yKey }) => {
+  const groupedData: DataPoint[] = data.reduce((result: DataPoint[], current: DataPoint) => {
+    const existingItem = result.find((item) => item[xKey] === current[xKey] && item[yKey] === current[yKey]);
+
+    if (!existingItem) {
+      // If the xKey and yKey combination does not exist, add it to the result array
+      result.push({
+        ...current,
+      });
+    }
+
+    return result;
+  }, []);
+  
+  
+  
+  console.log(groupedData)
+
   const svgRef = useRef<SVGSVGElement | null>(null);
   const tooltipRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (data.length === 0) return;
+    if (groupedData.length === 0) return;
 
     const width = 500;
     const height = 500;
@@ -40,7 +57,7 @@ const PiePlot: React.FC<Props> = ({ data, xKey, yKey }) => {
       .outerRadius(radius - 10)
       .innerRadius(0);
 
-    const dataPie = pie(data);
+    const dataPie = pie(groupedData); // Use the updated groupedData
 
     const arcGroup = svg.selectAll('.arc')
       .data(dataPie)
@@ -103,7 +120,7 @@ const PiePlot: React.FC<Props> = ({ data, xKey, yKey }) => {
       .text((d) => d.data[xKey].toString())
       .style('font-size', '14px')
       .style('fill', '#000');
-  }, [data, xKey, yKey]);
+  }, [groupedData, xKey, yKey]);
 
   return (
     <>
