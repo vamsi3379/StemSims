@@ -33,7 +33,7 @@ export function Graph({ exampleData, graphOptions }: GraphProps) {
   const [xKey, setXKey] = useState('');
   const [yKey, setYKey] = useState('');
   const [keyNames, setKeyNames] = useState<string[]>([]);
-  const [headng, setHeading] = useState("");
+  const [headng, setHeading] = useState('');
 
   useEffect(() => {
     if (exampleData.length > 0) {
@@ -53,26 +53,25 @@ export function Graph({ exampleData, graphOptions }: GraphProps) {
     // Show the respective graph based on xKey and yKey
     if (xKey !== '' && yKey !== '' && graphOptions.includes('Scatter Graph')) {
       setShowScatterGraph(true);
-      setHeading('Scatter Graph')
-    }else if (xKey !== '' && yKey !== '' && graphOptions.includes('Line Graph')) {
+      setHeading('Scatter Graph');
+    } else if (xKey !== '' && yKey !== '' && graphOptions.includes('Line Graph')) {
       setShowLineGraph(true);
-      setHeading('Line Graph')
+      setHeading('Line Graph');
     } else if (xKey !== '' && yKey !== '' && graphOptions.includes('Bar Graph')) {
       setShowBarGraph(true);
-      setHeading('Bar Graph')
+      setHeading('Bar Graph');
     } else if (xKey !== '' && yKey !== '' && graphOptions.includes('Pie Chart')) {
       setShowPieGraph(true);
-      setHeading('Pie Chart')
-    } 
+      setHeading('Pie Chart');
+    }
   }, [xKey, yKey, graphOptions]);
-
 
   const lineGraphClick = () => {
     setShowLineGraph(true);
     setShowBarGraph(false);
     setShowPieGraph(false);
     setShowScatterGraph(false);
-    setHeading('Line Graph')
+    setHeading('Line Graph');
   };
 
   const BarGraphClick = () => {
@@ -80,7 +79,7 @@ export function Graph({ exampleData, graphOptions }: GraphProps) {
     setShowBarGraph(true);
     setShowPieGraph(false);
     setShowScatterGraph(false);
-    setHeading('Bar Graph')
+    setHeading('Bar Graph');
   };
 
   const PieGraphClick = () => {
@@ -88,14 +87,15 @@ export function Graph({ exampleData, graphOptions }: GraphProps) {
     setShowBarGraph(false);
     setShowPieGraph(true);
     setShowScatterGraph(false);
-    setHeading('Pie Chart')
+    setHeading('Pie Chart');
   };
+
   const ScatterGraphClick = () => {
     setShowLineGraph(false);
     setShowBarGraph(false);
     setShowPieGraph(false);
     setShowScatterGraph(true);
-    setHeading('Scatter Graph')
+    setHeading('Scatter Graph');
   };
 
   const handleXKeyChange = (event: SelectChangeEvent<string>) => {
@@ -113,67 +113,70 @@ export function Graph({ exampleData, graphOptions }: GraphProps) {
   };
 
   return (
-    <>
-      {/* Dropdown for X Key */}
-      <Box
-        sx={{
+    <Grid container spacing={2} justifyContent="center"> {/* Center the main container */}
+      {/* Dropdown for X Key and Y Key in a single row */}
+      <Grid item xs={12} sx={{ textAlign: 'center' }}>
+        <Box
+          sx={{
             width: 400,
             height: 120,
             marginTop: '24px',
-        }}
-      >
-        <Grid container spacing={1}>
-            <Grid item xs={6} md={6}>
-              <FormControl variant="outlined" sx={{ m: 1, minWidth: 150 }}>
-                <InputLabel htmlFor="x-key-select">X-axis</InputLabel>
-                <Select
-                  value={xKey}
-                  onChange={handleXKeyChange}
-                  label="X Key"
-                  inputProps={{
-                    name: 'xKey',
-                    id: 'x-key-select',
-                  }}
-                >
-                  {keyNames.map((keyName) => (
-                    <MenuItem key={keyName} value={keyName}>
-                      {keyName}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={6} md={6}>
-              <FormControl variant="outlined" sx={{ m: 1, minWidth: 150 }}>
-                  <InputLabel htmlFor="y-key-select">Y-axis</InputLabel>
-                  <Select
-                    value={yKey}
-                    onChange={handleYKeyChange}
-                    label="Y Key"
-                    inputProps={{
-                      name: 'yKey',
-                      id: 'y-key-select',
-                    }}
-                  >
-                    {keyNames.map((keyName) => (
-                      <MenuItem key={keyName} value={keyName}>
-                        {keyName}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-          </Grid>
+            display: 'inline-flex', // Use inline-flex to place the items in a single row
+            justifyContent: 'space-between', // Add space between X and Y dropdowns
+          }}
+        >
+          <FormControl variant="outlined" sx={{ minWidth: 150 }}>
+            <InputLabel htmlFor="x-key-select">X-axis</InputLabel>
+            <Select
+              value={xKey}
+              onChange={handleXKeyChange}
+              label="X Key"
+              inputProps={{
+                name: 'xKey',
+                id: 'x-key-select',
+              }}
+            >
+              {keyNames.map((keyName) => (
+                <MenuItem key={keyName} value={keyName}>
+                  {keyName}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <FormControl variant="outlined" sx={{ minWidth: 150 }}>
+            <InputLabel htmlFor="y-key-select">Y-axis</InputLabel>
+            <Select
+              value={yKey}
+              onChange={handleYKeyChange}
+              label="Y Key"
+              inputProps={{
+                name: 'yKey',
+                id: 'y-key-select',
+              }}
+            >
+              {keyNames.map((keyName) => (
+                <MenuItem key={keyName} value={keyName}>
+                  {keyName}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </Box>
-      
+      </Grid>
 
-      
+      {/* ... (rest of the code) */}
+
       {graphOptions.length === 0 ? (
-        <Typography variant="body1">To display a graph, please select the type of graph you want from the options available on the right side of the top navigation bar.</Typography>
+        <Grid item xs={12} sx={{ textAlign: 'center' }}>
+          <Typography variant="body1">
+            To display a graph, please select the type of graph you want from the options available on the right side of
+            the top navigation bar.
+          </Typography>
+        </Grid>
       ) : (
-
         <Grid container spacing={2}>
-          <Grid item xs={12}>
+          <Grid item xs={12} sx={{ textAlign: 'center' }}>
             <ButtonGroup variant="outlined" aria-label="outlined button group">
               {graphOptions.includes('Scatter Graph') && (
                 <Button
@@ -209,14 +212,13 @@ export function Graph({ exampleData, graphOptions }: GraphProps) {
               )}
             </ButtonGroup>
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} sx={{ textAlign: 'center' }}>
             <Typography variant="h4" component="h2">
               {headng}
             </Typography>
           </Grid>
 
-          <Grid item xs={12}>
-            {/* Graphs */}
+          <Grid container item xs={12} justifyContent="center" alignItems="center">
             {showLineGraph && <LinePlot data={exampleData} xKey={xKey} yKey={yKey} />}
             {showScatterGraph && <ScatterPlot data={exampleData} xKey={xKey} yKey={yKey} />}
             {showBarGraph && <BarPlot data={exampleData} xKey={xKey} yKey={yKey} />}
@@ -224,6 +226,6 @@ export function Graph({ exampleData, graphOptions }: GraphProps) {
           </Grid>
         </Grid>
       )}
-    </>
+    </Grid>
   );
 }
