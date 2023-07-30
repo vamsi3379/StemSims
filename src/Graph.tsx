@@ -46,7 +46,7 @@ export function Graph({ exampleData, graphOptions }: GraphProps) {
   }, [exampleData]);
 
   useEffect(() => {
-    if (showLineGraph===false && showScatterGraph===false && showBarGraph===false && showPieGraph===false){
+    if ((showLineGraph===false && showScatterGraph===false && showBarGraph===false && showPieGraph===false) || ( headng!=="" && !graphOptions.includes(headng))){
     setShowLineGraph(false);
     setShowBarGraph(false);
     setShowPieGraph(false);
@@ -66,7 +66,7 @@ export function Graph({ exampleData, graphOptions }: GraphProps) {
       setHeading('Pie Chart');
     }
   }
-  }, [xKey, yKey, showLineGraph, showScatterGraph, showBarGraph, showPieGraph, graphOptions]);
+  }, [xKey, yKey, headng, showLineGraph, showScatterGraph, showBarGraph, showPieGraph, graphOptions]);
 
   const changeShow = (a:boolean, b:boolean, c:boolean, d:boolean) => {
     setShowLineGraph(a);
