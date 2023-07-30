@@ -37,6 +37,9 @@ const PiePlot: React.FC<Props> = ({ data, xKey, yKey }) => {
     const height = 600 - margin.top - margin.bottom;
     const radius = Math.min(width, height) / 2;
 
+    const svgWrapper = d3.select(svgRef.current);
+    svgWrapper.selectAll('*').remove();
+
     const svg = d3
       .select(svgRef.current)
       .attr('width', width)

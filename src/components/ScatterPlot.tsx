@@ -37,6 +37,9 @@ const ScatterPlot: React.FC<Props> = ({ data, xKey, yKey }) => {
     const width = screenWidth < 700 ? screenWidth - margin.left - margin.right : 700 - margin.left - margin.right;
     const height = 600 - margin.top - margin.bottom;
     
+    const svgWrapper = d3.select(svgRef.current);
+    svgWrapper.selectAll('*').remove();
+
     const svg = d3
       .select(svgRef.current)
       .attr('width', width + margin.left + margin.right)

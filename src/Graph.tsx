@@ -26,7 +26,7 @@ interface GraphProps {
 }
 
 export function Graph({ exampleData, graphOptions }: GraphProps) {
-  const [showLineGraph, setShowLineGraph] = useState(true);
+  const [showLineGraph, setShowLineGraph] = useState(false);
   const [showBarGraph, setShowBarGraph] = useState(false);
   const [showPieGraph, setShowPieGraph] = useState(false);
   const [showScatterGraph, setShowScatterGraph] = useState(false);
@@ -41,10 +41,12 @@ export function Graph({ exampleData, graphOptions }: GraphProps) {
       setKeyNames(columns);
       setXKey(columns[0]);
       setYKey(columns[1]);
+
     }
   }, [exampleData]);
 
   useEffect(() => {
+    if (showLineGraph===false && showScatterGraph===false && showBarGraph===false && showPieGraph===false){
     setShowLineGraph(false);
     setShowBarGraph(false);
     setShowPieGraph(false);
@@ -63,7 +65,8 @@ export function Graph({ exampleData, graphOptions }: GraphProps) {
       setShowPieGraph(true);
       setHeading('Pie Chart');
     }
-  }, [xKey, yKey, graphOptions]);
+  }
+  }, [xKey, yKey, showLineGraph, showScatterGraph, showBarGraph, showPieGraph, graphOptions]);
 
   const changeShow = (a:boolean, b:boolean, c:boolean, d:boolean) => {
     setShowLineGraph(a);
@@ -95,12 +98,10 @@ export function Graph({ exampleData, graphOptions }: GraphProps) {
 
   const handleXKeyChange = (event: SelectChangeEvent<string>) => {
     setXKey(event.target.value);
-    changeShow(false,false, false,false)
   };
 
   const handleYKeyChange = (event: SelectChangeEvent<string>) => {
     setYKey(event.target.value);
-    changeShow(false,false, false,false)
   };
 
   return (

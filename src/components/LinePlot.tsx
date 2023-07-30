@@ -46,6 +46,9 @@ const LinePlot: React.FC<Props> = ({ data, xKey, yKey }) => {
     const margin = { top: 20, right: 30, bottom: 60, left: 60 };
     const width = screenWidth < 700 ? screenWidth - margin.left - margin.right : 700 - margin.left - margin.right;
     const height = 600 - margin.top - margin.bottom;
+    
+    const svgWrapper = d3.select(svgRef.current);
+    svgWrapper.selectAll('*').remove();
 
     const svg = d3
       .select(svgRef.current)
