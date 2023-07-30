@@ -37,10 +37,10 @@ const BarPlot: React.FC<Props> = ({ data, xKey, yKey }) => {
     if (groupedData.length === 0) return;
 
     const screenWidth = window.innerWidth;
-    const margin = { top: 20, right: 30, bottom: 60, left: 60 };
+    const margin = { top: 40, right: 60, bottom: 60, left: 60 };
     const width = screenWidth < 700 ? screenWidth - margin.left - margin.right : 700 - margin.left - margin.right;
     const height = 600 - margin.top - margin.bottom;
-    
+
     const svgWrapper = d3.select(svgRef.current); 
     svgWrapper.selectAll('*').remove();
 
@@ -145,10 +145,43 @@ const BarPlot: React.FC<Props> = ({ data, xKey, yKey }) => {
           visibility: 'hidden',
           backgroundColor: 'rgba(0, 0, 0, 0.5)',
           color: '#fff',
-          padding: '4px',
-          borderRadius: '4px',
+          padding: '8px',
+          borderRadius: '20px',
         }}
       ></div>
+      <table style={{ borderCollapse: 'collapse', border: '1px solid black' }}>
+        <thead>
+          <tr>
+            <th style={{ border: '1px solid black', backgroundColor: 'transparent', padding: '8px' }}>
+              {xKey}
+            </th>
+            <th style={{ border: '1px solid black', backgroundColor: 'transparent', padding: '8px' }}>
+              {yKey}
+            </th>
+            <th style={{ border: '1px solid black', backgroundColor: 'transparent', padding: '8px' }}>
+              Color
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {groupedData.map((dataPoint, index) => (
+            <tr key={index}>
+              <td style={{ border: '1px solid black', padding: '8px' }}>{dataPoint[xKey].toString()}</td>
+              <td style={{ border: '1px solid black', padding: '8px' }}>{dataPoint[yKey].toString()}</td>
+              <td
+                style={{
+                  border: '1px solid black',
+                  padding: '8px',
+                  width: '20px',
+                  height: '20px',
+                  backgroundColor: colorScale(index),
+                }}
+              ></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      
     </>
   );
 };

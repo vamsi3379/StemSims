@@ -24,16 +24,25 @@ const ScatterPlot: React.FC<Props> = ({ data, xKey, yKey }) => {
     return result;
   }, []);
 
+  groupedData.sort((a, b) => {
+    if (a[xKey] === b[xKey]) {
+      return a[yKey] > b[yKey] ? 1 : -1;
+    } else {
+      return a[xKey] > b[xKey] ? 1 : -1;
+    }
+  });
+
+  
   const svgRef = useRef<SVGSVGElement | null>(null);
   const tooltipRef = useRef<HTMLDivElement | null>(null);
 
-  const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+  const colorScale = d3.scaleSequential(d3.interpolateWarm).domain([0, groupedData.length]);
 
   useEffect(() => {
     if (data.length === 0) return;
     
     const screenWidth = window.innerWidth;
-    const margin = { top: 20, right: 30, bottom: 60, left: 60 };
+    const margin = { top: 40, right: 60, bottom: 60, left: 60 };
     const width = screenWidth < 700 ? screenWidth - margin.left - margin.right : 700 - margin.left - margin.right;
     const height = 600 - margin.top - margin.bottom;
     
@@ -58,7 +67,7 @@ const ScatterPlot: React.FC<Props> = ({ data, xKey, yKey }) => {
       .attr('cx', (d) => xScale(d[xKey] as number))
       .attr('cy', (d) => yScale(d[yKey] as number))
       .attr('r', 5)
-      .attr('fill', (_, i) => colorScale(String(i)))
+      .attr('fill', (_, i) => colorScale(i))
       .on('mouseover', (event, d) => {
         const tooltip = tooltipRef.current;
         if (tooltip) {
@@ -97,22 +106,22 @@ const ScatterPlot: React.FC<Props> = ({ data, xKey, yKey }) => {
     svg.append('g').call(yAxis);
 
     svg
-    .append('text') 
-    .attr('x', width / 2)
-    .attr('y', height + margin.bottom / 2)
-    .style('text-anchor', 'middle')
-    .text("x-axis: "+ xKey);
+      .append('text') 
+      .attr('x', width / 2)
+      .attr('y', height + margin.bottom / 2)
+      .style('text-anchor', 'middle')
+      .text("x-axis: "+ xKey);
 
-  // Add y-axis label
-  svg
-    .append('text')
-    .attr('transform', `rotate(-90)`)
-    .attr('x', -height / 2)
-    .attr('y', -margin.left / 2)
-    .style('text-anchor', 'middle')
-    .text("y-axis: "+ yKey);
+    // Add y-axis label
+    svg
+      .append('text')
+      .attr('transform', `rotate(-90)`)
+      .attr('x', -height / 2)
+      .attr('y', -margin.left / 2)
+      .style('text-anchor', 'middle')
+      .text("y-axis: "+ yKey);
 
-}, [data, groupedData, xKey, yKey, colorScale]);
+  }, [data, groupedData, xKey, yKey, colorScale]);
 
   return (
     <>
@@ -122,12 +131,44 @@ const ScatterPlot: React.FC<Props> = ({ data, xKey, yKey }) => {
         style={{
           position: 'absolute',
           visibility: 'hidden',
-          backgroundColor: 'rgba(0, 0, 0, 0.8)',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
           color: '#fff',
-          padding: '4px',
-          borderRadius: '4px',
+          padding: '8px',
+          borderRadius: '20px',
         }}
       ></div>
+      <table style={{ borderCollapse: 'collapse', border: '1px solid black' }}>
+        <thead>
+          <tr>
+            <th style={{ border: '1px solid black', backgroundColor: 'transparent', padding: '8px' }}>
+              {xKey}
+            </th>
+            <th style={{ border: '1px solid black', backgroundColor: 'transparent', padding: '8px' }}>
+              {yKey}
+            </th>
+            <th style={{ border: '1px solid black', backgroundColor: 'transparent', padding: '8px' }}>
+              Color
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {groupedData.map((dataPoint, index) => (
+            <tr key={index}>
+              <td style={{ border: '1px solid black', padding: '8px' }}>{dataPoint[xKey].toString()}</td>
+              <td style={{ border: '1px solid black', padding: '8px' }}>{dataPoint[yKey].toString()}</td>
+              <td
+                style={{
+                  border: '1px solid black',
+                  padding: '8px',
+                  width: '20px',
+                  height: '20px',
+                  backgroundColor: colorScale(index),
+                }}
+              ></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </>
   );
 };

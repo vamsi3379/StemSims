@@ -28,13 +28,14 @@ const PiePlot: React.FC<Props> = ({ data, xKey, yKey }) => {
   const svgRef = useRef<SVGSVGElement | null>(null);
   const tooltipRef = useRef<HTMLDivElement | null>(null);
 
+
   useEffect(() => {
     if (groupedData.length === 0) return;
 
     const screenWidth = window.innerWidth;
-    const margin = { top: 20, right: 30, bottom: 60, left: 60 };
-    const width = screenWidth < 600 ? screenWidth - margin.left - margin.right : 700 - margin.left - margin.right;
-    const height = 600 - margin.top - margin.bottom;
+    const margin = { top: 40, right: 60, bottom: 60, left: 60 };
+    const width = screenWidth < 800 ? screenWidth - margin.left - margin.right : 700 - margin.left - margin.right;
+    const height = 800 - margin.top - margin.bottom;
     const radius = Math.min(width, height) / 2;
 
     const svgWrapper = d3.select(svgRef.current);
@@ -134,8 +135,8 @@ const PiePlot: React.FC<Props> = ({ data, xKey, yKey }) => {
       .text((d) => d.data[xKey].toString())
       .style('font-size', '14px')
       .style('fill', '#000');
-
-  }, [groupedData, xKey, yKey]);
+  
+    }, [groupedData, xKey, yKey]);
 
   return (
     <>
@@ -145,13 +146,104 @@ const PiePlot: React.FC<Props> = ({ data, xKey, yKey }) => {
         style={{
           position: 'absolute',
           visibility: 'hidden',
-          backgroundColor: 'rgba(0, 0, 0, 0.8)',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
           color: '#fff',
           padding: '8px',
-          borderRadius: '4px',
-          fontSize: '14px',
+          borderRadius: '20px',
         }}
       ></div>
+      <table
+        style={{ marginTop: '20px', borderCollapse: 'collapse', border: '1px solid black' }}
+      >
+        <thead>
+          <tr>
+            <th
+              style={{
+                border: '1px solid black',
+                backgroundColor: 'transparent',
+                padding: '8px',
+              }}
+            >
+              {xKey}
+            </th>
+            <th
+              style={{
+                border: '1px solid black',
+                backgroundColor: 'transparent',
+                padding: '8px',
+              }}
+            >
+              {yKey}
+            </th>
+            <th
+              style={{
+                border: '1px solid black',
+                backgroundColor: 'transparent',
+                padding: '8px',
+              }}
+            >
+              Percentage
+            </th>
+            <th
+              style={{
+                border: '1px solid black',
+                backgroundColor: 'transparent',
+                padding: '8px',
+              }}
+            >
+              Color
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {groupedData.map((dataPoint, index) => (
+            <tr key={index}>
+              <td
+                style={{
+                  border: '1px solid black',
+                  borderTop: index === 0 ? '1px solid black' : 'none',
+                  borderBottom: '1px solid black',
+                  padding: '8px',
+                }}
+              >
+                {dataPoint[xKey].toString()}
+              </td>
+              <td
+                style={{
+                  border: '1px solid black',
+                  borderTop: index === 0 ? '1px solid black' : 'none',
+                  borderBottom: '1px solid black',
+                  padding: '8px',
+                }}
+              >
+                {dataPoint[yKey].toString()}
+              </td>
+              <td
+                style={{
+                  border: '1px solid black',
+                  borderTop: index === 0 ? '1px solid black' : 'none',
+                  borderBottom: '1px solid black',
+                  padding: '8px',
+                }}
+              >
+                {`${Math.floor(
+                  ((dataPoint[yKey] as number) / d3.sum(groupedData, (d) => d[yKey] as number)) * 100
+                )}%`}
+              </td>
+              <td
+                style={{
+                  border: '1px solid black',
+                  borderTop: index === 0 ? '1px solid black' : 'none',
+                  borderBottom: '1px solid black',
+                  borderRight: '1px solid black',
+                  backgroundColor: d3.interpolateWarm(index / (groupedData.length - 1)),
+                  padding: '8px',
+                }}
+              ></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </>
   );
 };
