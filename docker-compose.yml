@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+  client:
+    container_name: stemsims_container
+    restart: unless-stopped
+    image: docker.io/vamsi3379/stemsims
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
+    ports:  #outside:inside(container)
+      - 3000:3000
